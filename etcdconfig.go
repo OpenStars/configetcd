@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	etcdEndpoints = []string{"http://10.60.1.20:2379", "http://10.110.1.100:2379", "http://10.110.68.103:2379"}
+	etcdEndpoints = []string{}
 	etcdClient    *clientv3.Client
 )
 
@@ -24,13 +24,16 @@ func InitModels(aEtcdEndpoints []string) {
 	var err error
 	if len(aEtcdEndpoints) > 0 {
 		etcdEndpoints = aEtcdEndpoints
+	} else {
+		log.Println("[ERROR] connect to etcd endpoint", etcdEndpoints, err, "please set etcdconfig.InitModels([]string) to set etcd endpoints in main function")
+		return
 	}
 	etcdClient, err = clientv3.New(clientv3.Config{
 		Endpoints:   etcdEndpoints,
 		DialTimeout: 5 * time.Second,
 	})
 	if err == context.DeadlineExceeded {
-		log.Println("[ERROR] connect to etcd endpoint", etcdEndpoints, err)
+		log.Println("[ERROR] connect to etcd endpoint", etcdEndpoints, err, "please set etcdconfig.InitModels([]string) to set etcd endpoints in main function")
 		return
 	}
 }
